@@ -42,22 +42,41 @@ k1, k2, k3, k4, k5 = 0.05, 0.04, 0.03, 0.02, 0.05
 A_TAG = 60
 dias = 60
 
-def simular(A0, E, S, T, M, Sp, dias):
+# ----------- MODELO AVANZADO: agrega oscilaciones amortiguadas -----------
+
+def simular_realista(A0, E, S, T, M, Sp, dias, rebotes=True):
     """
-    Simula la evolución de ansiedad A[t] según la fórmula diferencial:
-    dA/dt = -k1*A(t) + Sp*k2*E(t) - Sp*(k3*S(t) + k4*T + k5*M)
+    Simula ansiedad con decaimiento y, si rebotes=True, oscilaciones amortiguadas (modelo realista).
     """
     A = np.zeros(dias)
     A[0] = A0
+    # Parámetros para la onda amortiguada
+    b = 0.07 + (0.15 - Sp*0.04)         # amortiguamiento
+    w = 0.48 + (E/500)                  # frecuencia (sube si hay mucho estrés)
+    ruido_amp = 1.5 if rebotes else 0   # amplitud de “ruido emocional”
     for t in range(1, dias):
+        # Término base (como tu modelo)
         dA_dt = -k1 * A[t-1] + Sp * k2 * E - Sp * (k3*S + k4*T + k5*M)
-        A[t] = A[t-1] + dA_dt
+        base = A[t-1] + dA_dt
+        if rebotes:
+            # Onda amortiguada + “ruido emocional”
+            osc = np.exp(-b*t) * np.cos(w*t) * (0.22*A0)
+            ruido = np.random.normal(0, ruido_amp)
+        else:
+            osc = 0
+            ruido = 0
+        A[t] = max(0, base + osc + ruido)
     return A
 
-# ========= 5️⃣ ESCENARIOS COMPARATIVOS ==========
-escenario1 = simular(A0, E, S, 0, 0, Sp, dias)                  # Sin tratamiento
-escenario2 = simular(A0, E, S, T_base, 0, Sp, dias)             # Solo terapia
-escenario3 = simular(A0, E, S, T_base, M_base, Sp, dias)        # Terapia + medicación
+# ------------ ESCENARIOS: clásico vs realista (con rebotes) -----------------
+# Modelo clásico: sin rebotes
+escenario1 = simular_realista(A0, E, S, 0, 0, Sp, dias, rebotes=False)
+escenario2 = simular_realista(A0, E, S, T_base, 0, Sp, dias, rebotes=False)
+escenario3 = simular_realista(A0, E, S, T_base, M_base, Sp, dias, rebotes=False)
+# Modelo realista: con rebotes/ondas
+escenario1_osc = simular_realista(A0, E, S, 0, 0, Sp, dias, rebotes=True)
+escenario2_osc = simular_realista(A0, E, S, T_base, 0, Sp, dias, rebotes=True)
+escenario3_osc = simular_realista(A0, E, S, T_base, M_base, Sp, dias, rebotes=True)
 
 def clasificar(A):
     promedio = np.mean(A)
@@ -67,6 +86,9 @@ def clasificar(A):
 prom1, est1 = clasificar(escenario1)
 prom2, est2 = clasificar(escenario2)
 prom3, est3 = clasificar(escenario3)
+prom1o, est1o = clasificar(escenario1_osc)
+prom2o, est2o = clasificar(escenario2_osc)
+prom3o, est3o = clasificar(escenario3_osc)
 
 # ========= 6️⃣ RESULTADOS Y CLASIFICACIÓN ==========
 st.header("4️⃣ Resultados y Diagnóstico Modelo")
@@ -77,15 +99,21 @@ with col2:
     st.metric("Con terapia", f"{prom2:.2f}", est2)
 with col3:
     st.metric("Terapia + medicación", f"{prom3:.2f}", est3)
-
 st.write("**Umbral clínico estimado para TAG:** 60")
 
 # ========== 7️⃣ GRÁFICO EVOLUTIVO ===========
+
 st.header("5️⃣ Evolución de la Ansiedad (60 días)")
+modelo = st.radio("¿Qué modelo ver?", ["Clásico (descenso suave)", "Realista (con rebotes)"])
 fig, ax = plt.subplots()
-ax.plot(range(dias), escenario1, label=f"Sin tratamiento ({est1})", linewidth=2)
-ax.plot(range(dias), escenario2, label=f"Con terapia ({est2})", linestyle='dashed', linewidth=2)
-ax.plot(range(dias), escenario3, label=f"Terapia + medicación ({est3})", linestyle='dotted', linewidth=2)
+if modelo == "Clásico (descenso suave)":
+    ax.plot(range(dias), escenario1, label=f"Sin tratamiento ({est1})", linewidth=2)
+    ax.plot(range(dias), escenario2, label=f"Con terapia ({est2})", linestyle='dashed', linewidth=2)
+    ax.plot(range(dias), escenario3, label=f"Terapia + medicación ({est3})", linestyle='dotted', linewidth=2)
+else:
+    ax.plot(range(dias), escenario1_osc, label=f"Sin tratamiento ({est1o})", linewidth=2)
+    ax.plot(range(dias), escenario2_osc, label=f"Con terapia ({est2o})", linestyle='dashed', linewidth=2)
+    ax.plot(range(dias), escenario3_osc, label=f"Terapia + medicación ({est3o})", linestyle='dotted', linewidth=2)
 ax.axhline(y=A_TAG, color='red', linestyle='--', label="Umbral TAG")
 ax.set_xlabel("Días")
 ax.set_ylabel("Nivel de ansiedad")
@@ -97,19 +125,21 @@ st.pyplot(fig)
 st.info("El simulador es una herramienta educativa y NO reemplaza diagnóstico profesional. Consulta a un especialista en salud mental para diagnóstico y tratamiento individualizado.")
 
 # ========== 9️⃣ FÓRMULA USADA ===========
-#st.markdown("""
-#---
-#**Modelo base usado:**
+# (Descomenta si quieres mostrar la fórmula en LaTeX)
+# st.markdown("""
+# ---
+# **Modelo base usado:**
+#
+# $$
+# \\frac{dA}{dt} = -k_1 A(t) + Sp \\cdot k_2 E - Sp(k_3 S + k_4 T + k_5 M)
+# $$
+#
+# Donde:
+# - $A(t)$: nivel de ansiedad en el tiempo
+# - $Sp$: sensibilidad personal (ajusta el impacto de factores)
+# - $E$: eventos estresantes
+# - $S$: apoyo social
+# - $T$: terapia psicológica
+# - $M$: medicación
+# """)
 
-#$$
-#\\frac{dA}{dt} = -k_1 A(t) + Sp \\cdot k_2 E - Sp(k_3 S + k_4 T + k_5 M)
-#$$
-
-#Donde:
-#- $A(t)$: nivel de ansiedad en el tiempo
-#- $Sp$: sensibilidad personal (ajusta el impacto de factores)
-#- $E$: eventos estresantes
-#- $S$: apoyo social
-#- $T$: terapia psicológica
-#- $M$: medicación
-#""")
