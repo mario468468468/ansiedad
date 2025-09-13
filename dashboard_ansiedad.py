@@ -12,20 +12,129 @@ st.caption("Educativo. No reemplaza diagnóstico profesional.")
 
 with st.sidebar:
     st.header("Entradas")
-    A0 = st.slider("Ansiedad inicial", 0, 100, 70)
-    E  = st.slider("Estrés (E)", 0, 100, 60)
-    S  = st.slider("Apoyo social (S)", 0, 100, 50)
-    Tb = st.slider("Terapia (T)", 0, 100, 40)
-    med = st.radio("¿Medicación?", ["No","Sí"])
-    Mb = st.slider("Medicación (M)", 0, 100, 30) if med=="Sí" else 0
-    # Sensibilidad personal compacta
-    Sp = st.slider("Sensibilidad personal (Sp)", 0.5, 2.0, 1.0, 0.05,
-                   help=">1 amplifica el impacto de E; <1 amortigua.")
-    # Umbrales
-    A_OBJ  = st.slider("Objetivo funcional", 0, 100, 40)
-    A_BAJA = st.slider("Umbral BAJO", 0, 100, 40)
-    A_MEDIA= st.slider("Umbral MEDIO", 0, 100, 60)
+    st.caption("Ajusta según tu situación actual. Pasa el mouse por cada control para ver la guía.")
 
+    # --- Presets rápidos (opcionales) ---
+    preset = st.selectbox(
+        "🎛️ Presets de ejemplo",
+        ["— Ninguno —", "Día difícil", "Semana estable", "Recuperación activa"],
+        help=(
+            "Preconfigura valores típicos:\n"
+            "- Día difícil: mucho estrés, poco apoyo.\n"
+            "- Semana estable: estrés moderado, apoyo medio.\n"
+            "- Recuperación activa: terapia y apoyo altos."
+        )
+    )
+
+    # Valores base
+    A0_val, E_val, S_val, Tb_val, Mb_val, Sp_val = 70, 60, 50, 40, 30, 1.0
+    if preset == "Día difícil":
+        A0_val, E_val, S_val, Tb_val, Mb_val, Sp_val = 75, 80, 35, 20, 0, 1.3
+    elif preset == "Semana estable":
+        A0_val, E_val, S_val, Tb_val, Mb_val, Sp_val = 55, 50, 55, 35, 0, 1.0
+    elif preset == "Recuperación activa":
+        A0_val, E_val, S_val, Tb_val, Mb_val, Sp_val = 50, 40, 70, 60, 30, 0.9
+
+    # --- Controles con guía referencial ---
+    A0 = st.slider(
+        "Ansiedad inicial (A0)",
+        0, 100, A0_val,
+        help=(
+            "Tu nivel HOY. 0=sin ansiedad, 100=crisis. "
+            "Referencias: 0–30 bajo, 31–60 medio, 61–100 alto."
+        ),
+    )
+
+    E = st.slider(
+        "Estrés (E)",
+        0, 100, E_val,
+        help=(
+            "Carga externa (trabajo, dinero, conflictos). "
+            "0–30 bajo; 31–60 moderado; 61–100 alto. "
+            "↑E tiende a subir la curva y la probabilidad de ALTA."
+        ),
+    )
+
+    S = st.slider(
+        "Apoyo social (S)",
+        0, 100, S_val,
+        help=(
+            "Calidad y disponibilidad de apoyo real. "
+            "0–30 escaso; 31–60 medio; 61–100 alto. "
+            "↑S amortigua picos y acelera salida de ALTA."
+        ),
+    )
+
+    Tb = st.slider(
+        "Terapia psicológica (T)",
+        0, 100, Tb_val,
+        help=(
+            "Dosis/estructura (frecuencia, adherencia, tareas). "
+            "0=ninguna; 100=intensiva y constante. "
+            "↑T reduce la ansiedad esperada y el día mediano (50%)."
+        ),
+    )
+
+    med = st.radio(
+        "¿Medicación?",
+        ["No", "Sí"],
+        help=(
+            "Si tomas psicofármacos recetados, marca 'Sí' y ajusta el efecto global. "
+            "El modelo no diferencia fármacos."
+        ),
+    )
+    Mb = st.slider(
+        "Medicación (M)",
+        0, 100, Mb_val if med == "Sí" else 0,
+        help=(
+            "Efecto percibido global de la medicación. "
+            "0=sin efecto; 100=efecto máximo. "
+            "↑M suele bajar la ansiedad esperada y estabilizar."
+        ),
+        disabled=(med == "No"),
+    )
+
+    Sp = st.slider(
+        "Sensibilidad personal (Sp)",
+        0.5, 2.0, Sp_val, 0.05,
+        help=(
+            "Multiplica el impacto de los factores. "
+            "<1=amortiguado; 1=normal; >1=hipersensible. "
+            "Ej.: 1.3 significa que E y otros factores ‘pegan’ 30% más."
+        ),
+    )
+
+    st.markdown("**Umbrales personales**")
+    A_OBJ  = st.slider(
+        "Objetivo funcional (A_OBJ)",
+        0, 100, 40,
+        help=(
+            "Nivel con el que ya puedes funcionar bien. "
+            "Úsalo como meta de recuperación."
+        ),
+    )
+    A_BAJA = st.slider(
+        "Umbral BAJO (A_BAJA)",
+        0, 100, 40,
+        help="Por debajo de esto consideras la ansiedad controlada.",
+    )
+    A_MEDIA= st.slider(
+        "Umbral MEDIO (A_MEDIA)",
+        0, 100, 60,
+        help="Rango en el que requiere atención. Por encima pasa a ALTA.",
+    )
+
+    # Guía rápida compacta
+    with st.expander("📎 Guía rápida de interpretación"):
+        st.markdown(
+            "- **E alto** sube la curva y mantiene ALTA.\n"
+            "- **S y T altos** bajan la curva y aumentan Prob(BAJA).\n"
+            "- **M** puede acelerar la estabilización si está indicada.\n"
+            "- **Sp>1** hace todo más reactivo: más picos y más lenta la bajada.\n"
+            "- **A_OBJ** define cuándo consideras ‘funcional’. Úsalo como meta."
+        )
+
+    # Horizonte y disparo
     dias = 90
     if st.button("Analizar"):
         st.session_state.run = True
