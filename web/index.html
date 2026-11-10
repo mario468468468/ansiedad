@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0e1c35">
+<title>Simulador de ansiedad | Modelos ODE y Markov</title>
+<meta name="description" content="Explora modelos matemáticos de ansiedad con escenarios, factores, gráficos y probabilidades de Markov. Uso educativo, no diagnóstico.">
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#18243b;background:#f4f7fb;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}.top{background:linear-gradient(120deg,#111d37 0%,#173d56 65%,#0b6967 100%);color:white;padding:46px max(24px,calc((100vw - 1200px)/2)) 50px}.top-inner{max-width:1200px;margin:auto}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.16em;font-weight:750;color:#94e6dc}.top h1{font-size:clamp(27px,4vw,46px);line-height:1.13;letter-spacing:-.04em;margin:13px 0 13px}.top p{max-width:780px;color:#c6dbe1;font-size:15px;line-height:1.7;margin:0}.chip{display:inline-block;border:1px solid #6ab5af;color:#a9f8ed;border-radius:100px;font-size:12px;padding:6px 11px;margin-top:21px}.wrap{max-width:1250px;margin:-20px auto 36px;padding:0 22px}.layout{display:grid;grid-template-columns:minmax(300px,355px) minmax(0,1fr);gap:20px;align-items:start}.panel{background:#fff;border:1px solid #e2e9f1;border-radius:18px;box-shadow:0 8px 28px rgba(29,55,89,.06);overflow:hidden}.controls{padding:0 19px 20px}.controls-head{position:sticky;top:0;background:white;z-index:3;margin:0 -19px;padding:20px 19px 13px;border-bottom:1px solid #eaf0f5;display:flex;align-items:center;justify-content:space-between}.controls-head strong{font-size:15px}.reset{border:1px solid #cfdce7;background:#fff;color:#1d5a67;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:700}.section-title{font-size:11px;color:#6f819b;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin:23px 0 16px}.setting{margin:0 0 20px}.setting-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:9px}.setting label{font-size:12.5px;font-weight:650;color:#344761}.value{font-size:13px;color:#087d84;font-weight:800;font-variant-numeric:tabular-nums}.setting input[type=range]{width:100%;height:5px;border-radius:9px;appearance:none;-webkit-appearance:none;background:linear-gradient(to right,#13a99e var(--pct),#e4eaf2 var(--pct));outline:none}.setting input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;border-radius:50%;background:#0d817e;border:3px solid white;box-shadow:0 0 0 1px #0d817e,0 2px 6px #a3b9be}.setting input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#0d817e;border:2px solid white;box-shadow:0 0 0 1px #0d817e}.setting small{display:block;color:#7b8ca3;font-size:11px;margin-top:8px}.checkrow{background:#f3f8fa;padding:11px;border-radius:10px;display:flex;align-items:center;gap:11px;font-size:12px;font-weight:700;margin-bottom:17px}.checkrow input{accent-color:#087d84;width:16px;height:16px}details{border-top:1px solid #e6edf4;padding:14px 0}summary{cursor:pointer;font-size:12.5px;font-weight:800;color:#29485e}details .details-body{padding-top:20px}.content{display:flex;flex-direction:column;gap:20px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.metric{background:#fff;border:1px solid #e2e9f1;border-radius:15px;padding:17px 15px;min-height:116px}.metric .label{font-size:11.5px;color:#6a7c94;font-weight:650;line-height:1.35}.metric .big{font-size:28px;letter-spacing:-.05em;color:#17324b;font-weight:800;margin:12px 0 3px}.metric .foot{font-size:10.5px;color:#788ca0}.metric.primary{border:1px solid #66b9b5;background:#eff9f8}.metric.primary .big{color:#086c72}.block{padding:21px 21px 17px}.block h2{font-size:18px;letter-spacing:-.02em;margin:0 0 6px}.sub{font-size:12.5px;color:#6f8195;line-height:1.6;margin:0 0 20px}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0 18px}.tabs button{background:#f0f4f9;color:#4f647c;border:1px solid #e0e8f0;border-radius:8px;padding:9px 13px;font-size:12px;font-weight:750}.tabs button.active{background:#133c54;color:white;border-color:#133c54}.chart-container{width:100%;overflow:hidden;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid #edf1f7;border-radius:12px;padding:8px 5px 0}.chart-container svg{display:block;width:100%;height:auto;aspect-ratio:860 / 350}.legend{display:flex;flex-wrap:wrap;gap:15px;margin:15px 3px 5px}.legend-item{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#5b6f88}.swatch{width:19px;height:3px;border-radius:9px}.insight{padding:16px 17px;background:#f3f8fb;border:1px solid #e4edf3;border-radius:10px;font-size:12.5px;color:#365268;line-height:1.65;margin-top:18px}.table-scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;color:#748499;font-weight:750;font-size:11px;border-bottom:1px solid #e7edf4;padding:12px 10px}td{padding:13px 10px;color:#35465c;border-bottom:1px solid #e7edf4}td:nth-child(n+2){font-variant-numeric:tabular-nums}.negative{color:#b15350}.positive{color:#0a877c}.note{font-size:11.5px;color:#657790;line-height:1.7;padding:16px 20px;background:#f9fbfd;border-top:1px solid #e7edf4}.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;white-space:pre-wrap;background:#f6f9fc;padding:12px;border-radius:8px;color:#31516b;overflow-wrap:anywhere}.footer{text-align:center;font-size:11.5px;color:#8594aa;padding:4px 20px 24px}@media(max-width:980px){.layout{grid-template-columns:310px minmax(0,1fr)}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{min-height:100px}}@media(max-width:720px){.top{padding:35px 22px 44px}.wrap{padding:0 12px}.layout{display:flex;flex-direction:column}.controls,.content{width:100%}.controls-head{position:static}.metrics{gap:8px}.metric{padding:14px 12px;min-height:100px}.metric .big{font-size:24px}.block{padding:17px 13px}.tabs button{padding:9px 10px;font-size:11px}.chart-container svg{min-width:0}.section-title{margin-top:18px}} 
+</style>
+</head>
+<body>
+<header class="top"><div class="top-inner"><div class="eyebrow">Herramienta interactiva · Simulación matemática</div><h1>Simulador de ansiedad</h1><p>Explora cómo podrían cambiar trayectorias matemáticas según estrés, apoyo, terapia y medicación. Compara un modelo de evolución continua, otro con fluctuaciones y un modelo probabilístico de Markov.</p><span class="chip">Educativo · No es diagnóstico ni pronóstico clínico</span></div></header>
+<main class="wrap"><div class="layout">
+<aside class="panel controls">
+ <div class="controls-head"><strong>⚙️ Configuración del modelo</strong><button type="button" class="reset" id="reset">Restablecer</button></div>
+ <div id="basic-controls"></div>
+ <label class="checkrow"><input type="checkbox" id="medication"> Incluir efecto simulado de medicación</label>
+ <div id="medication-controls"></div>
+ <details><summary>Coeficientes avanzados · ODE</summary><div class="details-body" id="ode-controls"></div></details>
+ <details><summary>Parámetros avanzados · Markov</summary><div class="details-body" id="markov-controls"></div></details>
+</aside>
+<section class="content" aria-live="polite">
+<div class="metrics" id="metrics"></div>
+<div class="panel block">
+<h2>Evolución de la ansiedad · 90 días</h2><p class="sub">Ajusta los controles para actualizar los escenarios en tiempo real. Las curvas no representan pronósticos médicos individuales.</p>
+<div class="tabs" id="tabs"><button data-view="classic" class="active">Modelo clásico</button><button data-view="real">Con fluctuaciones</button><button data-view="markov">Markov</button><button data-view="personal">Mi escenario</button></div>
+<div class="chart-container" id="chart"></div><div class="legend" id="legend"></div><div class="insight" id="insight"></div>
+</div>
+<div class="panel block" id="probability-panel" hidden><h2>Probabilidad por estado · Markov</h2><p class="sub">Probabilidades de permanecer en cada régimen del modelo: bajo, medio o alto.</p><div class="chart-container" id="probability-chart"></div><div class="legend" id="probability-legend"></div></div>
+<div class="panel block"><h2>Comparación de escenarios</h2><p class="sub">Promedios simulados en los primeros 60 días, con el mismo punto de partida.</p><div class="table-scroll"><table><thead><tr><th>Escenario</th><th>Promedio 60 días</th><th>Nivel día 90</th></tr></thead><tbody id="comparison"></tbody></table></div><div class="insight" id="goal-report"></div></div>
+<div class="panel"><div class="block"><h2>Cómo interpretar los resultados</h2><p class="sub">El modelo ODE aplica cambios diarios a un índice sintético. Markov modela probabilidades de pasar entre tres estados. Los parámetros son ilustrativos y no han sido calibrados para predecir la evolución clínica individual.</p><details><summary>Ver ecuación ODE</summary><div class="details-body"><div class="formula">ΔA = −k1 × A + Sp × k2 × E − Sp × (k3 × S_eff + k4 × T + k5 × M_eff)</div><p class="sub">Sp: sensibilidad calculada. E: estrés. S_eff: apoyo con saturación. T: terapia. M_eff: efecto de medicación con saturación.</p></div></details><details><summary>Ver la especificación Markov</summary><div class="details-body"><div class="formula">π(t+1) = π(t) × P
+P(i,j) = softmax(puntuación_destino + inercia_si_i=j)
+E[A(t)] = Σ π(t,j) × μ(j)</div><p class="sub">Cada destino BAJO/MEDIO/ALTO responde a pesos de estrés, apoyo, terapia, medicación y sensibilidad. Sus probabilidades suman 100%.</p></div></details></div><div class="note"><strong>Importante:</strong> esta página no mide si una persona tiene trastorno de ansiedad generalizada (TAG), ni calcula días reales de recuperación. Un resultado alto o bajo no es una evaluación clínica. No modifiques medicación o tratamientos según estas simulaciones. Si hay síntomas persistentes o empeoran, consulta a un profesional.</div></div>
+</section></div></main><div class="footer">Basado en el proyecto de Streamlit de mario468468468 · Versión web para Vercel · Cálculo local sin guardar respuestas</div>
+<script>
+(function(){
+'use strict';
+const spec = {
+ A0:['Ansiedad inicial',0,100,70,1,'Índice subjetivo inicial (0 a 100)'],
+ E:['Eventos estresantes',0,100,60,1,'Intensidad simulada de estrés'],
+ S:['Apoyo social',0,100,50,1,'Mayor valor = más apoyo'],
+ T:['Terapia psicológica',0,100,40,1,'Intensidad simulada de apoyo terapéutico'],
+ trauma:['Eventos traumáticos recientes',0,5,2,1,'0 = ninguno; 5 = muy intensos'],
+ resiliencia:['Resiliencia percibida',0,5,3,1,'0 = baja; 5 = alta'],
+ regulacion:['Regulación emocional',0,5,3,1,'0 = baja; 5 = alta'],
+ A_OBJ:['Objetivo personal',0,100,40,1,'Umbral matemático objetivo'],
+ A_BAJA:['Límite zona baja',0,100,40,1,'Límite del estado bajo'],
+ A_MEDIA:['Límite zona media',0,100,60,1,'Límite del estado medio'],
+ A_ALTA:['Referencia zona alta',0,100,80,1,'Referencia visual superior'],
+ M:['Efecto simulado de medicación',0,100,30,1,'No representa una dosis ni una recomendación'],
+ k1:['k1 · reducción natural',.01,.15,.05,.01,''],
+ k2:['k2 · impacto del estrés',.01,.10,.04,.01,''],
+ k3:['k3 · apoyo social',.01,.07,.03,.01,''],
+ k4:['k4 · terapia',.01,.07,.02,.01,''],
+ k5:['k5 · medicación',.01,.15,.05,.01,''],
+ muL:['μ baja',0,60,30,1,'Media de ansiedad del estado bajo'],
+ muM:['μ media',30,80,55,1,'Media de ansiedad del estado medio'],
+ muH:['μ alta',60,100,80,1,'Media de ansiedad del estado alto'],
+ inertia:['Inercia κ',0,3,1,.1,'Persistencia en un estado'],
+ wE:['Peso estrés',0,3,1,.1,''],
+ wS:['Peso apoyo',0,3,1,.1,''],
+ wT:['Peso terapia',0,3,.8,.1,''],
+ wM:['Peso medicación',0,3,1.2,.1,''],
+ wSp:['Peso sensibilidad',0,3,1,.1,''],
+ bL:['Sesgo zona baja',-2,2,0,.1,''],
+ bM:['Sesgo zona media',-2,2,0,.1,''],
+ bH:['Sesgo zona alta',-2,2,0,.1,'']
+};
+let view='classic';
+const state=Object.fromEntries(Object.entries(spec).map(([k,v])=>[k,v[3]]));
+let medicine=false;
+function el(id){return document.getElementById(id)}
+function addSection(target,heading,keys){let parent=el(target),h=document.createElement('div');h.className='section-title';h.textContent=heading;parent.appendChild(h);keys.forEach(k=>{let cfg=spec[k],box=document.createElement('div');box.className='setting';let hd=document.createElement('div');hd.className='setting-head';let l=document.createElement('label');l.htmlFor='v-'+k;l.textContent=cfg[0];let val=document.createElement('span');val.className='value';val.id='out-'+k;val.textContent=cfg[3];hd.append(l,val);let inp=document.createElement('input');inp.type='range';inp.id='v-'+k;inp.min=cfg[1];inp.max=cfg[2];inp.step=cfg[4];inp.value=cfg[3];inp.setAttribute('aria-label',cfg[0]);inp.addEventListener('input',()=>{state[k]=Number(inp.value);val.textContent=inp.value;paintRange(inp);render()});box.append(hd,inp);if(cfg[5]){let small=document.createElement('small');small.textContent=cfg[5];box.appendChild(small)}parent.appendChild(box);paintRange(inp)})}
+function paintRange(i){let pct=100*(Number(i.value)-Number(i.min))/(Number(i.max)-Number(i.min));i.style.setProperty('--pct',pct+'%')}
+addSection('basic-controls','Punto de partida',['A0','E']);
+addSection('basic-controls','Factores de protección',['S','T']);
+addSection('basic-controls','Sensibilidad personal',['trauma','resiliencia','regulacion']);
+addSection('basic-controls','Objetivos y zonas',['A_OBJ','A_BAJA','A_MEDIA','A_ALTA']);
+addSection('medication-controls','Medicación (solo simulación)',['M']);
+addSection('ode-controls','Coeficientes del modelo',['k1','k2','k3','k4','k5']);
+addSection('markov-controls','Valores esperados',['muL','muM','muH']);
+addSection('markov-controls','Transiciones y pesos',['inertia','wE','wS','wT','wM','wSp','bL','bM','bH']);
+el('medication-controls').hidden=true;
+el('medication').addEventListener('change',e=>{medicine=e.target.checked;el('medication-controls').hidden=!medicine;render()});
+el('reset').addEventListener('click',()=>{for(let k in spec){state[k]=spec[k][3];let i=el('v-'+k);i.value=state[k];el('out-'+k).textContent=state[k];paintRange(i)}medicine=false;el('medication').checked=false;el('medication-controls').hidden=true;view='classic';updateTabs();render()});
+document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;updateTabs();render()}));
+function updateTabs(){document.querySelectorAll('#tabs button').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-pressed',String(b.dataset.view===view))})}
+const DAYS=90;
+function clamp(v,a,b){return Math.min(b,Math.max(a,v))}
+function avg(v,n){return v.slice(0,n).reduce((a,b)=>a+b,0)/n}
+function rng(seed){let s=seed>>>0;return ()=>{s=(Math.imul(1664525,s)+1013904223)>>>0;return (s+.5)/4294967296}}
+function gauss(random){let u=random(),v=random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function simulateODE(a,T,M,Sp,rebotes,seed){let A=Array(DAYS).fill(0);A[0]=a.A0;let rand=rng(seed);let b=.07+(.15-Sp*.04),w=.48+a.E/500;let Se=100*(1-Math.exp(-a.S/40)),Me=100*(1-Math.exp(-M/30));for(let t=1;t<DAYS;t++){let last=A.slice(Math.max(0,t-10),t);let SpT=(t>10&&avg(last,last.length)>70)?Sp+.15:Sp;let d=-a.k1*A[t-1]+SpT*a.k2*a.E-SpT*(a.k3*Se+a.k4*T+a.k5*Me);let osc=rebotes?Math.exp(-b*t)*Math.cos(w*t)*(.18*a.A0):0;let noise=rebotes?1.3*gauss(rand):0;A[t]=Math.max(0,A[t-1]+d+osc+noise)}return A}
+function softmax(a){let mx=Math.max(...a),v=a.map(x=>Math.exp(x-mx)),sm=v.reduce((p,c)=>p+c,0);return v.map(x=>x/sm)}
+function rowMarkov(i,a,Sp,M){let sL=a.bL-a.wE*a.E/100+a.wS*a.S/100+a.wT*a.T/100+a.wM*M/100-a.wSp*(Sp-1),sM=a.bM,sH=a.bH+a.wE*a.E/100-a.wS*a.S/100-a.wT*a.T/100-a.wM*M/100+a.wSp*(Sp-1);let s=[sL,sM,sH];s[i]+=a.inertia;return softmax(s)}
+function simulateMarkov(a,Sp,M){let mu=[a.muL,a.muM,a.muH],dist=a.A0<=a.A_BAJA?[1,0,0]:a.A0<=a.A_MEDIA?[0,1,0]:[0,0,1],rows=[0,1,2].map(i=>rowMarkov(i,a,Sp,M)),probs=[],exp=[];for(let t=0;t<DAYS;t++){probs.push([...dist]);exp.push(dist.reduce((s,p,i)=>s+p*mu[i],0));dist=[0,1,2].map(j=>dist.reduce((s,p,i)=>s+p*rows[i][j],0))}return {mu,probs,exp}}
+function firstUnder(arr,value){let x=arr.findIndex(v=>v<=value);return x===-1?null:x}
+function reachMarkov(m,goal,q){let eligible=m.mu.map((v,i)=>v<=goal?i:-1).filter(v=>v>=0);if(!eligible.length)return null;let x=m.probs.findIndex(p=>eligible.reduce((s,i)=>s+p[i],0)>=q);return x<0?null:x}
+function f(n,d=1){return Number(n).toFixed(d)}
+function metric(label,val,foot,primary=false){return '<div class="metric'+(primary?' primary':'')+'"><div class="label">'+label+'</div><div class="big">'+val+'</div><div class="foot">'+foot+'</div></div>'}
+function chart(series,thresholds,minY,maxY,ylabel){let W=860,H=350,L=48,R=18,T=15,B=40,plotW=W-L-R,plotH=H-T-B;function X(t){return L+plotW*t/(DAYS-1)}function Y(y){return T+plotH*(maxY-y)/(maxY-minY)}let svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Gráfico de '+ylabel+' a lo largo de 90 días">';for(let i=0;i<=5;i++){let yy=minY+(maxY-minY)*i/5,y=Y(yy);svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#e7edf4" stroke-width="1"/><text x="'+(L-9)+'" y="'+(y+4)+'" text-anchor="end" fill="#7890a5" font-size="11">'+f(yy,maxY<=1?1:0)+'</text>'}for(let t of [0,15,30,45,60,75,89])svg+='<text x="'+X(t)+'" y="'+(H-18)+'" text-anchor="middle" fill="#7890a5" font-size="11">'+t+'</text>';svg+='<text x="'+(W/2)+'" y="'+(H-2)+'" text-anchor="middle" fill="#7b8fa6" font-size="11">Días</text>';thresholds.forEach(s=>{if(s.y<minY||s.y>maxY)return;let y=Y(s.y);svg+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="'+s.color+'" stroke-width="1.4" stroke-dasharray="6 6" opacity=".70"/>'});series.forEach(s=>{let pts=s.data.map((y,i)=>f(X(i),2)+','+f(Y(clamp(y,minY,maxY)),2)).join(' ');svg+='<polyline points="'+pts+'" fill="none" stroke="'+s.color+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" '+(s.dash?'stroke-dasharray="'+s.dash+'"':'')+'/>'});return svg+'</svg>'}
+function legend(series,thresholds){return [...series.map(s=>({name:s.name,color:s.color})),...thresholds.map(s=>({name:s.name,color:s.color}))].map(s=>'<div class="legend-item"><span class="swatch" style="background:'+s.color+'"></span>'+s.name+'</div>').join('')}
+function render(){let a=state,M=medicine?a.M:0,Sp=clamp(1+a.trauma*.1-a.resiliencia*.05-a.regulacion*.05,.5,2),models={};
+models.none=simulateODE(a,0,0,Sp,false,51);models.therapy=simulateODE(a,a.T,0,Sp,false,52);models.both=simulateODE(a,a.T,M,Sp,false,53);
+models.noneOsc=simulateODE(a,0,0,Sp,true,151);models.therapyOsc=simulateODE(a,a.T,0,Sp,true,152);models.bothOsc=simulateODE(a,a.T,M,Sp,true,153);
+models.personal=simulateODE(a,a.T,M,Sp,true,154);
+let mark=simulateMarkov(a,Sp,M),dGoal=firstUnder(models.personal,a.A_OBJ),q25=reachMarkov(mark,a.A_OBJ,.25),q50=reachMarkov(mark,a.A_OBJ,.5),q75=reachMarkov(mark,a.A_OBJ,.75);
+let goalStr=dGoal===null?'No cruzado':dGoal+' días';
+el('metrics').innerHTML=metric('Sensibilidad personal',f(Sp,2),'Sp · escala matemática')+metric('Cruce de tu objetivo · ODE',goalStr,'Primera vez ≤ '+a.A_OBJ,true)+metric('Objetivo · Markov (50%)',q50===null?'No alcanzado':'Día '+q50,'Probabilidad de estado objetivo ≥ 50%')+metric('Markov · índice día 90',f(mark.exp[89],1)+'/100','Valor esperado del estado');
+let thresholds=[],series=[];
+if(view==='classic'||view==='real'){let osc=view==='real';series=[{name:'Sin tratamiento',color:'#64748b',data:models[osc?'noneOsc':'none']},{name:'Con terapia',color:'#0b9d99',data:models[osc?'therapyOsc':'therapy'],dash:'7 4'},{name:'Terapia + medicación',color:'#4f65d6',data:models[osc?'bothOsc':'both'],dash:'2 5'}];thresholds=[{name:'Referencia 60 (no diagnóstica)',y:60,color:'#e17b6f'}]}
+else{series=[{name:view==='markov'?'Esperanza Markov':'Tu trayectoria ODE',color:'#0d8285',data:view==='markov'?mark.exp:models.personal}];thresholds=[{name:'Zona baja',y:a.A_BAJA,color:'#18a185'},{name:'Zona media',y:a.A_MEDIA,color:'#e4a33d'},{name:'Zona alta',y:a.A_ALTA,color:'#d57473'},{name:'Objetivo',y:a.A_OBJ,color:'#5c75d6'}]}
+let maxY=Math.max(100,...series.flatMap(s=>s.data));maxY=Math.ceil(maxY/10)*10;
+el('chart').innerHTML=chart(series,thresholds,0,maxY,'nivel de ansiedad');el('legend').innerHTML=legend(series,thresholds);
+let sText=view==='markov'?'Markov estima la distribución entre BAJA, MEDIA y ALTA. Los umbrales y pesos son configurables. Las probabilidades reflejan los supuestos del modelo, no riesgos clínicos.':view==='real'?'Las fluctuaciones incorporan oscilación amortiguada y ruido sintético reproducible. El resultado puede variar respecto del modelo continuo.':view==='personal'?'Se muestra el escenario con tus parámetros actuales, incluidos los umbrales definidos por ti.':'La curva clásica utiliza una ecuación determinista sin fluctuaciones; es una referencia matemática simplificada.';
+el('insight').textContent=sText;
+el('probability-panel').hidden=view!=='markov';if(view==='markov'){let pSeries=[{name:'Prob. zona baja',color:'#0b9f8c',data:mark.probs.map(p=>p[0])},{name:'Prob. zona media',color:'#e3a236',data:mark.probs.map(p=>p[1])},{name:'Prob. zona alta',color:'#d47673',data:mark.probs.map(p=>p[2])}];el('probability-chart').innerHTML=chart(pSeries,[],0,1,'probabilidades');el('probability-legend').innerHTML=legend(pSeries,[])}
+let scenarios=[['Sin tratamiento',models.none],['Con terapia',models.therapy],['Terapia + medicación',models.both]];el('comparison').innerHTML=scenarios.map((s,i)=>'<tr><td>'+s[0]+'</td><td>'+f(avg(s[1],60),2)+'</td><td>'+f(s[1][89],2)+'</td></tr>').join('');
+let variab=Math.floor(5+Math.abs(Sp-1)*6+Math.abs(a.E-50)/20),dRange=dGoal===null?'El escenario ODE no cruza el objetivo en los 90 días simulados.':'Cruce matemático en el día '+dGoal+' (banda heurística '+Math.max(0,dGoal-variab)+'–'+Math.min(89,dGoal+variab)+').';
+let mRange=q50===null?'Markov no alcanza una probabilidad de 50% de estar en estados compatibles con el objetivo.':'Markov alcanza 50% en día '+q50+'; umbrales de 25%: '+(q25??'no alcanzado')+' y 75%: '+(q75??'no alcanzado')+'.';
+let warning=a.A_BAJA>a.A_MEDIA?' Los límites de zona baja y media están invertidos; revisa tu configuración.':'';
+el('goal-report').textContent=dRange+' '+mRange+warning+' Estas cifras son resultados del modelo, no tiempos reales de recuperación.'}
+render();
+})();
+</script>
+</body>
+</html>
